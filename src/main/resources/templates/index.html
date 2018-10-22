@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    hello!  welcome to my page ..
+
+    <div th:each="user : ${users}">
+        <p>[[${user.id}]],[[${user.username}]]</p>
+    </div>
+
+</body>
+</html>
