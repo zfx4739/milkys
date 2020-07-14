@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.SecurityDemo.mapper.productMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.SecurityDemo.domain.Product">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="type" property="type" />
+        <result column="sales" property="sales" />
+        <result column="productdetails" property="productdetails" />
+        <result column="comment" property="comment" />
+        <result column="createTime" property="createTime" />
+        <result column="creator" property="creator" />
+        <result column="updateTime" property="updateTime" />
+        <result column="mender" property="mender" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, type, sales, productdetails, comment, createTime, creator, updateTime, mender,parents
+    </sql>
+    <select id="findAll" resultType="com.example.SecurityDemo.domain.Product">
+        select * from product
+    </select>
+    <select id="GetProductList" parameterType="com.example.SecurityDemo.domain.Product" resultType="com.example.SecurityDemo.domain.Product">
+        select * from product
+        <if test="ew.emptyOfWhere == false">
+            ${ew.customSqlSegment}
+        </if>
+
+    </select>
+    <!--模糊查询，排除分类数据，不分页
+        and t1.XM like '%'||#{zyshDto.XM}||'%'
+    -->
+    <select id="queryProduct" parameterType="String" resultType="com.example.SecurityDemo.domain.Product">
+                  select * from product where parents!=0
+                  <if test="names != null and names != ''">
+                      and name like "%"#{names,jdbcType=VARCHAR}"%"
+                  </if>
+    </select>
+
+</mapper>

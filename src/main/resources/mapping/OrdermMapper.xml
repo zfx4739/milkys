@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.SecurityDemo.mapper.ordermMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.SecurityDemo.domain.Orderm">
+        <id column="id" property="id" />
+        <result column="orderNumber" property="orderNumber" />
+        <result column="orderInfo" property="orderInfo" />
+        <result column="storeId" property="storeId" />
+        <result column="storeName" property="storeName" />
+        <result column="productId" property="productId" />
+        <result column="comment" property="comment" />
+        <result column="productName" property="productName" />
+        <result column="status" property="status" />
+        <result column="remark" property="remark" />
+        <result column="totalPrice" property="totalPrice" />
+        <result column="createTime" property="createTime" />
+        <result column="updateTime" property="updateTime" />
+        <result column="creator" property="creator" />
+        <result column="mender" property="mender" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, orderNumber, orderInfo, storeId, storeName, productId, comment, productName, status, remark, totalPrice, createTime, updateTime, creator, mender
+    </sql>
+    <select id="findAll" resultType="com.example.SecurityDemo.domain.Orderm">
+        select * from orderm
+    </select>
+    <select id="GetOrdermList" resultType="com.example.SecurityDemo.domain.Orderm">
+         select * from orderm
+    </select>
+
+</mapper>

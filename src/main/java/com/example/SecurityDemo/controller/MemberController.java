@@ -3,13 +3,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.SecurityDemo.domain.Member;
-import com.example.SecurityDemo.domain.SysUser;
-import com.example.SecurityDemo.service.UserService;
+import com.example.SecurityDemo.service.memberService;
 import com.example.SecurityDemo.util.PageRequest;
 import com.example.SecurityDemo.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,10 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.List;
-
 /**
  * <p>
- * 用户顾客信息表 前端控制器
+ * 会员信息表 前端控制器
  * </p>
  *
  * @author zfx
@@ -29,41 +28,43 @@ import java.util.List;
  */
 
 @RestController
-@RequestMapping("/user")
-public class UserController {
-@Autowired
-  private UserService userService;
+@RequestMapping("/member")
+public class MemberController {
+    @Autowired
+    private memberService memberservice;
 
-    @ApiOperation("查询用户信息")
-    @GetMapping("/getList")
+
+    @ApiOperation("获取会员列表方法")
+    @GetMapping("getList")
     public Result getList(){
         Result result=new Result();
-        QueryWrapper<SysUser> que=new QueryWrapper<SysUser>();
+        QueryWrapper<Member> que=new QueryWrapper<Member>();
         que.orderByDesc("id");
-        List<SysUser> memberss=userService.findAll();
+        List<Member> members=memberservice.list(que);
+        List<Member> memberss=memberservice.findAll();
         result.setData(memberss);
         result.setSuccess("获取成功！");
         return result;
     }
-
     /**
-    * @description 分页查询用户信息
-    *@params  
-    * @return
-    * @author  zfx
-    * @date  2020/6/30 16:20
-    *
-    */
-    @ApiOperation("分页查询用户信息")
-    @GetMapping("listUser")
-    public Result listUser(PageRequest pageRequest, Member member){
+     * @description  分页查询会员方法
+     *@params  pageRequest  member
+     * @return  import com.kanq.platform.test.util.Result;
+     * @author  zfx
+     * @date  2020/6/19 9:24
+     *
+     */
+ //   @PreAuthorize("hasAnyRole('5')")
+    @ApiOperation("分页获取会员列表方法")
+    @GetMapping("listMember")
+    public Result listMember(PageRequest pageRequest, Member member){
         Result result=new Result();
-        QueryWrapper<SysUser> wrapper = new QueryWrapper();
+        QueryWrapper<Member> wrapper = new QueryWrapper();
         //排序方式
         wrapper.orderByDesc("id");
-        Page<SysUser> page = new Page<SysUser>(pageRequest.getPageNum(),pageRequest.getPageSize());
-        IPage<SysUser> mapIPage = userService.GetUserList(page, wrapper);
-        List<SysUser> list = mapIPage.getRecords();
+        Page<Member> page = new Page<>(pageRequest.getPageNum(),pageRequest.getPageSize());
+        IPage<Member> mapIPage = memberservice.GetMemberList(page, wrapper);
+        List<Member> list = mapIPage.getRecords();
         result.setData(mapIPage.getRecords());
         result.setPages(mapIPage.getPages());
         result.setTotal(mapIPage.getTotal());
@@ -77,15 +78,16 @@ public class UserController {
     }
 
     /**
-    * @description   添加用户信息
-    *@params
-    * @return
-    * @author  zfx
-    * @date  2020/6/30 16:23
-    */
-    @ApiOperation("添加用户信息")
-    @PostMapping("addUser")
-    public Result addUser(@Valid SysUser user, BindingResult bindingResult){
+     * @description 添加会员信息
+     *@params  Member member, BindingResult bindingResult
+     * @return
+     * @author  zfx
+     * @date  2020/6/19 10:32
+     *
+     */
+    @ApiOperation("添加会员信息方法")
+    @PostMapping("addMember")
+    public Result addMember(@Valid Member member, BindingResult bindingResult){
         Result result=new Result();
         if( bindingResult.hasErrors()){
             String messages = bindingResult.getAllErrors()
@@ -95,7 +97,7 @@ public class UserController {
                     .orElse("参数输入有误！");
             throw new IllegalArgumentException(messages);
         }
-        int count=userService.addUser(user);
+        int count=memberservice.addMember(member);
         if(count!=1){
             result.setMessage("添加失败！");
             result.setCode(Result.RESULT_ERROR);
@@ -114,11 +116,11 @@ public class UserController {
      * @date  2020/6/19 11:08
      *
      */
-    @ApiOperation("修改会员信息")
-    @PostMapping("/updateUser")
-    public Result updateUser(SysUser user){
+    @ApiOperation("修改会员信息方法")
+    @PostMapping("/updateMember")
+    public Result updateMember(Member member){
         Result result=new Result();
-        int count=userService.updUser(user);
+        int count=memberservice.updMember(member);
         if(count!=1){
             result.setMessage("修改失败！");
             result.setCode(Result.RESULT_ERROR);
@@ -137,11 +139,11 @@ public class UserController {
      * @date  2020/6/19 11:11
      *
      */
-    @ApiOperation("删除会员信息")
-    @GetMapping("/deleteUserr")
-    public Result deleteUserr(int id){
+    @ApiOperation("删除会员信息方法")
+    @GetMapping("/deleteMember")
+    public Result deteleMeber(int id){
         Result result=new Result();
-        int count=userService.delUser(id);
+        int count=memberservice.delMember(id);
         if(count!=1){
             result.setMessage("删除失败！");
             result.setCode(Result.RESULT_ERROR);
@@ -153,22 +155,24 @@ public class UserController {
     }
 
     /**
-     * @description  获取用户详情
+     * @description  获取会员详情
      *@params
      * @return
      * @author  zfx
-     * @date  2020/6/30 11:14
+     * @date  2020/6/19 11:14
      *
      */
-    @ApiOperation("获取用户详情")
-    @GetMapping("/detailUser")
-    public Result detailUser(int id){
+    @ApiOperation("获取会员详情方法")
+    @GetMapping("/detailMember")
+    public Result detailMember(int id){
         Result result=new Result();
-        SysUser user=userService.detali(id);
+        Member meber=memberservice.detali(id);
         result.setCode(Result.RESULT_SUCCESS);
         result.setMessage("操作成功");
-        result.setData(user);
+        result.setData(meber);
         return result;
     }
+
+
 }
 

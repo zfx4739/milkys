@@ -2,9 +2,8 @@ package com.example.SecurityDemo.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.SecurityDemo.domain.Member;
-import com.example.SecurityDemo.domain.SysUser;
-import com.example.SecurityDemo.service.UserService;
+import com.example.SecurityDemo.domain.Price;
+import com.example.SecurityDemo.service.priceService;
 import com.example.SecurityDemo.util.PageRequest;
 import com.example.SecurityDemo.util.Result;
 import io.swagger.annotations.Api;
@@ -18,10 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.List;
-
 /**
  * <p>
- * 用户顾客信息表 前端控制器
+ * 价位表 前端控制器
  * </p>
  *
  * @author zfx
@@ -29,41 +27,39 @@ import java.util.List;
  */
 
 @RestController
-@RequestMapping("/user")
-public class UserController {
-@Autowired
-  private UserService userService;
-
-    @ApiOperation("查询用户信息")
+@RequestMapping("/price")
+public class PriceController {
+    @Autowired
+    private priceService priceService;
+    @ApiOperation("获取价位列表")
     @GetMapping("/getList")
     public Result getList(){
         Result result=new Result();
-        QueryWrapper<SysUser> que=new QueryWrapper<SysUser>();
-        que.orderByDesc("id");
-        List<SysUser> memberss=userService.findAll();
-        result.setData(memberss);
-        result.setSuccess("获取成功！");
+        List<Price> proList=priceService.findAll();
+        result.setMessage("获取成功！");
+        result.setData(proList);
         return result;
     }
 
     /**
-    * @description 分页查询用户信息
-    *@params  
-    * @return
-    * @author  zfx
-    * @date  2020/6/30 16:20
-    *
-    */
-    @ApiOperation("分页查询用户信息")
-    @GetMapping("listUser")
-    public Result listUser(PageRequest pageRequest, Member member){
+     * @description 分页查询产品价格信息
+     *@params
+     * @return
+     * @author  zfx
+     * @date  2020/6/30 16:20
+     *
+     */
+
+    @ApiOperation("分页查询产品价格信息方法")
+    @GetMapping("listPrice")
+    public Result listPrice(PageRequest pageRequest, Price price){
         Result result=new Result();
-        QueryWrapper<SysUser> wrapper = new QueryWrapper();
+        QueryWrapper<Price> wrapper = new QueryWrapper<Price>();
         //排序方式
         wrapper.orderByDesc("id");
-        Page<SysUser> page = new Page<SysUser>(pageRequest.getPageNum(),pageRequest.getPageSize());
-        IPage<SysUser> mapIPage = userService.GetUserList(page, wrapper);
-        List<SysUser> list = mapIPage.getRecords();
+        Page<Price> page = new Page<Price>(pageRequest.getPageNum(),pageRequest.getPageSize());
+        IPage<Price> mapIPage = priceService.GetPriceList(page, wrapper);
+        List<Price> list = mapIPage.getRecords();
         result.setData(mapIPage.getRecords());
         result.setPages(mapIPage.getPages());
         result.setTotal(mapIPage.getTotal());
@@ -77,15 +73,15 @@ public class UserController {
     }
 
     /**
-    * @description   添加用户信息
-    *@params
-    * @return
-    * @author  zfx
-    * @date  2020/6/30 16:23
-    */
-    @ApiOperation("添加用户信息")
-    @PostMapping("addUser")
-    public Result addUser(@Valid SysUser user, BindingResult bindingResult){
+     * @description   添加产品价格信息
+     *@params
+     * @return
+     * @author  zfx
+     * @date  2020/6/30 16:23
+     */
+    @ApiOperation("添加产品价格信息")
+    @PostMapping("addPrice")
+    public Result addPrice(@Valid Price price, BindingResult bindingResult){
         Result result=new Result();
         if( bindingResult.hasErrors()){
             String messages = bindingResult.getAllErrors()
@@ -95,7 +91,7 @@ public class UserController {
                     .orElse("参数输入有误！");
             throw new IllegalArgumentException(messages);
         }
-        int count=userService.addUser(user);
+        int count=priceService.addPrice(price);
         if(count!=1){
             result.setMessage("添加失败！");
             result.setCode(Result.RESULT_ERROR);
@@ -107,18 +103,18 @@ public class UserController {
     }
 
     /**
-     * @description  修改会员信息
+     * @description  修改产品价格信息
      *@params
      * @return
      * @author  zfx
      * @date  2020/6/19 11:08
      *
      */
-    @ApiOperation("修改会员信息")
-    @PostMapping("/updateUser")
-    public Result updateUser(SysUser user){
+    @ApiOperation("修改产品价格信息")
+    @PostMapping("/updatePrice")
+    public Result updatePrice(Price price){
         Result result=new Result();
-        int count=userService.updUser(user);
+        int count=priceService.updPrice(price);
         if(count!=1){
             result.setMessage("修改失败！");
             result.setCode(Result.RESULT_ERROR);
@@ -130,18 +126,18 @@ public class UserController {
     }
 
     /**
-     * @description  删除会员信息
+     * @description  删除产品价格信息
      *@params
      * @return
      * @author  zfx
      * @date  2020/6/19 11:11
      *
      */
-    @ApiOperation("删除会员信息")
-    @GetMapping("/deleteUserr")
-    public Result deleteUserr(int id){
+    @ApiOperation("删除产品价格信息")
+    @GetMapping("/deletePrice")
+    public Result deletePrice(int id){
         Result result=new Result();
-        int count=userService.delUser(id);
+        int count=priceService.delPrice(id);
         if(count!=1){
             result.setMessage("删除失败！");
             result.setCode(Result.RESULT_ERROR);
@@ -153,21 +149,21 @@ public class UserController {
     }
 
     /**
-     * @description  获取用户详情
+     * @description  获取价位价格详情
      *@params
      * @return
      * @author  zfx
      * @date  2020/6/30 11:14
      *
      */
-    @ApiOperation("获取用户详情")
-    @GetMapping("/detailUser")
-    public Result detailUser(int id){
+    @ApiOperation("获取价位价格详情")
+    @GetMapping("/detailPrice")
+    public Result detailPrice(int id){
         Result result=new Result();
-        SysUser user=userService.detali(id);
+        Price price=priceService.detali(id);
         result.setCode(Result.RESULT_SUCCESS);
         result.setMessage("操作成功");
-        result.setData(user);
+        result.setData(price);
         return result;
     }
 }

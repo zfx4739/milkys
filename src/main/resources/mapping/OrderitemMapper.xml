@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.SecurityDemo.mapper.orderitemMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.SecurityDemo.domain.Orderitem">
+        <id column="id" property="id" />
+        <result column="productid" property="productid" />
+        <result column="orderid" property="orderid" />
+        <result column="num" property="num" />
+        <result column="title" property="title" />
+        <result column="price" property="price" />
+        <result column="totalfee" property="totalfee" />
+        <result column="picpath" property="picpath" />
+        <result column="createTime" property="createTime" />
+        <result column="creator" property="creator" />
+        <result column="updateTime" property="updateTime" />
+        <result column="mender" property="mender" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, productid, orderid, num, title, price, totalfee, picpath, createTime, creator, updateTime, mender
+    </sql>
+    <select id="GetOrderitemList" resultType="com.example.SecurityDemo.domain.Orderitem">
+              select * from orderitem
+    </select>
+    <select id="findAll" resultType="com.example.SecurityDemo.domain.Orderitem">
+        select * from orderitem
+    </select>
+
+</mapper>

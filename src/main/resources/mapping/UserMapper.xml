@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.SecurityDemo.mapper.UserMapper">
+
+    <!-- 通用查询映射结果aa   -->
+    <resultMap id="BaseResultMap" type="com.example.SecurityDemo.domain.SysUser">
+        <id column="id" property="id" />
+        <result column="wxnumber" property="wxnumber" />
+        <result column="head" property="head" />
+        <result column="username" property="username" />
+        <result column="sex" property="sex" />
+        <result column="openid" property="openid" />
+        <result column="card" property="card" />
+        <result column="birthday" property="birthday" />
+        <result column="phone" property="phone" />
+        <result column="address" property="address" />
+        <result column="balance" property="balance" />
+        <result column="createTime" property="createTime" />
+        <result column="creator" property="creator" />
+        <result column="updateTime" property="updateTime" />
+        <result column="mender" property="mender" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, wxnumber, head, username, sex, card, birthday, phone, address, balance, createTime, creator, updateTime, mender,openid
+    </sql>
+    <select id="findAll" resultType="com.example.SecurityDemo.domain.SysUser">
+        select * from sysuser
+    </select>
+    <select id="GetUserList" resultType="com.example.SecurityDemo.domain.SysUser">
+        select * from sysuser
+    </select>
+    <select id="selectByName" resultType="com.example.SecurityDemo.domain.SysUser">
+    select * from sysuser where username = #{userName};
+    </select>
+</mapper>

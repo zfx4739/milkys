@@ -2,9 +2,8 @@ package com.example.SecurityDemo.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.SecurityDemo.domain.Member;
-import com.example.SecurityDemo.domain.SysUser;
-import com.example.SecurityDemo.service.UserService;
+import com.example.SecurityDemo.domain.Ordershipping;
+import com.example.SecurityDemo.service.ordershippingService;
 import com.example.SecurityDemo.util.PageRequest;
 import com.example.SecurityDemo.util.Result;
 import io.swagger.annotations.Api;
@@ -18,52 +17,49 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.List;
-
 /**
  * <p>
- * 用户顾客信息表 前端控制器
+ * 订单配送表 前端控制器
  * </p>
  *
  * @author zfx
- * @since 2020-06-30
+ * @since 2020-07-01
  */
 
 @RestController
-@RequestMapping("/user")
-public class UserController {
-@Autowired
-  private UserService userService;
+@RequestMapping("/ordershipping")
+public class OrdershippingController {
+    @Autowired
+    private ordershippingService ordershippingservice;
 
-    @ApiOperation("查询用户信息")
-    @GetMapping("/getList")
+    @ApiOperation("查询订单地址信息方法")
+    @GetMapping("getList")
     public Result getList(){
         Result result=new Result();
-        QueryWrapper<SysUser> que=new QueryWrapper<SysUser>();
-        que.orderByDesc("id");
-        List<SysUser> memberss=userService.findAll();
-        result.setData(memberss);
+        QueryWrapper<Ordershipping> que=new QueryWrapper<Ordershipping>();
+        List<Ordershipping> ordershipp=ordershippingservice.findAll();
+        result.setData(ordershipp);
         result.setSuccess("获取成功！");
         return result;
     }
-
     /**
-    * @description 分页查询用户信息
-    *@params  
-    * @return
-    * @author  zfx
-    * @date  2020/6/30 16:20
-    *
-    */
-    @ApiOperation("分页查询用户信息")
-    @GetMapping("listUser")
-    public Result listUser(PageRequest pageRequest, Member member){
+     * @description  分页查询订单地址信息方法
+     *@params  pageRequest  member
+     * @return  import com.kanq.platform.test.util.Result;
+     * @author  zfx
+     * @date  2020/6/19 9:24
+     *
+     */
+    @ApiOperation("分页查询订单地址信息方法")
+    @GetMapping("listOrdershipping")
+    public Result listOrdershipping(PageRequest pageRequest, Ordershipping ordershipping){
         Result result=new Result();
-        QueryWrapper<SysUser> wrapper = new QueryWrapper();
+        QueryWrapper<Ordershipping> wrapper = new QueryWrapper();
         //排序方式
         wrapper.orderByDesc("id");
-        Page<SysUser> page = new Page<SysUser>(pageRequest.getPageNum(),pageRequest.getPageSize());
-        IPage<SysUser> mapIPage = userService.GetUserList(page, wrapper);
-        List<SysUser> list = mapIPage.getRecords();
+        Page<Ordershipping> page = new Page<Ordershipping>(pageRequest.getPageNum(),pageRequest.getPageSize());
+        IPage<Ordershipping> mapIPage = ordershippingservice.GetOrdershippingList(page, wrapper);
+        List<Ordershipping> list = mapIPage.getRecords();
         result.setData(mapIPage.getRecords());
         result.setPages(mapIPage.getPages());
         result.setTotal(mapIPage.getTotal());
@@ -77,15 +73,16 @@ public class UserController {
     }
 
     /**
-    * @description   添加用户信息
-    *@params
-    * @return
-    * @author  zfx
-    * @date  2020/6/30 16:23
-    */
-    @ApiOperation("添加用户信息")
-    @PostMapping("addUser")
-    public Result addUser(@Valid SysUser user, BindingResult bindingResult){
+     * @description 添加订单地址信息方法
+     *@params  Member member, BindingResult bindingResult
+     * @return
+     * @author  zfx
+     * @date  2020/6/19 10:32
+     *
+     */
+    @ApiOperation("添加订单地址信息方法")
+    @PostMapping("addOrdershipping")
+    public Result addOrdershipping(@Valid Ordershipping ordershipping, BindingResult bindingResult){
         Result result=new Result();
         if( bindingResult.hasErrors()){
             String messages = bindingResult.getAllErrors()
@@ -95,7 +92,7 @@ public class UserController {
                     .orElse("参数输入有误！");
             throw new IllegalArgumentException(messages);
         }
-        int count=userService.addUser(user);
+        int count= ordershippingservice.addOrdershipping(ordershipping);
         if(count!=1){
             result.setMessage("添加失败！");
             result.setCode(Result.RESULT_ERROR);
@@ -107,18 +104,18 @@ public class UserController {
     }
 
     /**
-     * @description  修改会员信息
+     * @description  修改订单地址信息方法
      *@params
      * @return
      * @author  zfx
      * @date  2020/6/19 11:08
      *
      */
-    @ApiOperation("修改会员信息")
-    @PostMapping("/updateUser")
-    public Result updateUser(SysUser user){
+    @ApiOperation("修改订单地址信息方法")
+    @PostMapping("/updateOrdershipping")
+    public Result updateOrdershipping(Ordershipping ordershipping){
         Result result=new Result();
-        int count=userService.updUser(user);
+        int count=ordershippingservice.updOrdershipping(ordershipping);
         if(count!=1){
             result.setMessage("修改失败！");
             result.setCode(Result.RESULT_ERROR);
@@ -130,18 +127,18 @@ public class UserController {
     }
 
     /**
-     * @description  删除会员信息
+     * @description  删除订单地址信息方法
      *@params
      * @return
      * @author  zfx
      * @date  2020/6/19 11:11
      *
      */
-    @ApiOperation("删除会员信息")
-    @GetMapping("/deleteUserr")
-    public Result deleteUserr(int id){
+    @ApiOperation("删除订单地址信息方法")
+    @GetMapping("/deleteOrdershipping")
+    public Result deteleOrdershipping(int id){
         Result result=new Result();
-        int count=userService.delUser(id);
+        int count=ordershippingservice.delOrdershipping(id);
         if(count!=1){
             result.setMessage("删除失败！");
             result.setCode(Result.RESULT_ERROR);
@@ -153,22 +150,23 @@ public class UserController {
     }
 
     /**
-     * @description  获取用户详情
+     * @description  获取订单地址详情方法
      *@params
      * @return
      * @author  zfx
-     * @date  2020/6/30 11:14
+     * @date  2020/6/19 11:14
      *
      */
-    @ApiOperation("获取用户详情")
-    @GetMapping("/detailUser")
-    public Result detailUser(int id){
+    @ApiOperation("获取订单地址详情方法")
+    @GetMapping("/detailOrdershipping")
+    public Result detailOrdershipping(int id){
         Result result=new Result();
-        SysUser user=userService.detali(id);
+        Ordershipping meber=ordershippingservice.detali(id);
         result.setCode(Result.RESULT_SUCCESS);
         result.setMessage("操作成功");
-        result.setData(user);
+        result.setData(meber);
         return result;
     }
+
 }
 

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.SecurityDemo.mapper.specificationMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.SecurityDemo.domain.Specification">
+        <id column="id" property="id" />
+        <result column="sizes" property="sizes" />
+        <result column="temperature" property="temperature" />
+        <result column="capacity" property="capacity" />
+        <result column="sweetness" property="sweetness" />
+        <result column="productId" property="productId" />
+        <result column="type" property="type" />
+        <result column="sequence" property="sequence" />
+        <result column="pice" property="pice" />
+        <result column="custom" property="custom" />
+        <result column="ismultiple" property="ismultiple" />
+        <result column="createTime" property="createTime" />
+        <result column="creator" property="creator" />
+        <result column="updateTime" property="updateTime" />
+        <result column="mender" property="mender" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, sizes, temperature, capacity, sweetness, productId, type, sequence, createTime, creator, updateTime, mender,pice,custom,ismultiple
+    </sql>
+    <select id="findAll" resultType="com.example.SecurityDemo.domain.Specification">
+        select * from specification
+    </select>
+
+    <select id="GetSpecificationList" resultType="com.example.SecurityDemo.domain.Specification">
+        select * from specification
+    </select>
+
+</mapper>
