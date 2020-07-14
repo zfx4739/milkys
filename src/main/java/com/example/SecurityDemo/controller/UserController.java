@@ -62,15 +62,15 @@ public class UserController {
         //排序方式
         wrapper.orderByDesc("id");
         Page<SysUser> page = new Page<SysUser>(pageRequest.getPageNum(),pageRequest.getPageSize());
-        IPage<SysUser> mapIPage = userService.GetUserList(page, wrapper);
-        List<SysUser> list = mapIPage.getRecords();
-        result.setData(mapIPage.getRecords());
-        result.setPages(mapIPage.getPages());
-        result.setTotal(mapIPage.getTotal());
-        result.setSize(mapIPage.getSize());
-        result.setCurrent(mapIPage.getCurrent());
-        result.setPages(mapIPage.getPages());
-        result.setData(mapIPage.getRecords());
+        IPage<SysUser> mapIpage = userService.GetUserList(page, wrapper);
+        List<SysUser> list = mapIpage.getRecords();
+        result.setData(mapIpage.getRecords());
+        result.setPages(mapIpage.getPages());
+        result.setTotal(mapIpage.getTotal());
+        result.setSize(mapIpage.getSize());
+        result.setCurrent(mapIpage.getCurrent());
+        result.setPages(mapIpage.getPages());
+        result.setData(mapIpage.getRecords());
         result.setCode(Result.RESULT_SUCCESS);
         result.setMessage("RESULT_SUCCESS");
         return result;
