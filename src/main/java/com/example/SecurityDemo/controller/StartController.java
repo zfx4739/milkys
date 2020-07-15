@@ -1,5 +1,6 @@
 package com.example.SecurityDemo.controller;
 import com.example.SecurityDemo.config.Service;
+import com.example.SecurityDemo.domain.Server;
 import com.example.SecurityDemo.domain.SysMenu;
 import com.example.SecurityDemo.domain.SysRole;
 import com.example.SecurityDemo.domain.SysUser;
@@ -39,8 +40,6 @@ public class StartController {
 
     @Autowired
     private ISysMenuService menuService;
-//    @Autowired
-//    private RedisCache redisCache;
     @PostMapping ("/login")
     public Result login(@RequestBody LoginBody loginBody) {
             Result ajax = new Result();
@@ -107,6 +106,38 @@ public class StartController {
         VerifyCodeUtils.output(image, resp.getOutputStream());
     }
 
+    @GetMapping("/monitor/server")
+    public AjaxResult server() throws Exception {
+        System.err.println("********************服务器监控**********************");
+        Server server = new Server();
+        server.copyTo();
+        return AjaxResult.success(server);
+    }
+
+    @GetMapping("/system/user/profile")
+    public AjaxResult profile()
+    {
+
+        SysUser user = userService.detali(2);;
+        AjaxResult ajax = AjaxResult.success(user);
+//        ajax.put("roleGroup", userService.selectUserRoleGroup(loginUser.getUsername()));
+//        ajax.put("postGroup", userService.selectUserPostGroup(loginUser.getUsername()));
+        return ajax;
+    }
+//    /**
+//     * 个人信息
+//     */
+//    @GetMapping("/system/user/profile")
+//    public AjaxResult profile()
+//    {
+//        Object principal = authentication.getPrincipal();
+//        LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+//        SysUser user = loginUser.getUser();
+//        AjaxResult ajax = AjaxResult.success(user);
+//        ajax.put("roleGroup", userService.selectUserRoleGroup(loginUser.getUsername()));
+//        ajax.put("postGroup", userService.selectUserPostGroup(loginUser.getUsername()));
+//        return ajax;
+//    }
     /**
      * 生成验证码
      */

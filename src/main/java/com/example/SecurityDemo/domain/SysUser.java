@@ -48,6 +48,25 @@ public class SysUser extends Model<SysUser> {
      */
     @ApiModelProperty("头像")
     private String head;
+
+    /**
+     * 用户昵称
+     */
+    @ApiModelProperty("用户昵称")
+    private String nickname;
+
+    /**
+     * 帐号状态（0正常 1停用）
+     */
+    @ApiModelProperty("帐号状态（0正常 1停用）")
+    private String status;
+
+    /**
+     * 邮箱
+     */
+    @ApiModelProperty("邮箱")
+    private String email;
+
     /**
      * 姓名
      */

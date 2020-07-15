@@ -27,7 +27,7 @@ import java.io.IOException;
 @Component
 public class VerifyCodeFilter extends GenericFilterBean {
     //如果请求为Post,并且请求地址为login则会被拦截器拦截并比对验证码是否正确，正确继续检验，否则提示错误给前台
-    private String defaultFilterProcessUrl = "/dologin";
+    private String defaultFilterProcessUrl = "/login";
     @Autowired
     private UserDetailsService userDetailsService;
     @Override
@@ -41,13 +41,14 @@ public class VerifyCodeFilter extends GenericFilterBean {
             System.out.println(request.getParameter("username"));
 
 //            if (request.getParameter("username") != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-////                UserDetails userDetails = this.userDetailsService.loadUserByUsername(request.getParameter("username"));
+//            UserDetails userDetails = this.userDetailsService.loadUserByUsername(request.getParameter("username"));
 ////                if (jwtTokenUtil.validateToken(authHeader)) {
 ////                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 ////                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 ////                    SecurityContextHolder.getContext().setAuthentication(authentication);
 ////                }
 ////            }
+//            }
 // 验证码验证
 //            String requestCaptcha = request.getParameter("code");
 //            String genCaptcha = (String) request.getSession().getAttribute("index_code");

@@ -7,8 +7,11 @@
         <id column="id" property="id" />
         <result column="wxnumber" property="wxnumber" />
         <result column="head" property="head" />
+        <result column="nickname" property="nickname" />
         <result column="username" property="username" />
         <result column="sex" property="sex" />
+        <result column="email" property="email" />
+        <result column="status" property="status" />
         <result column="openid" property="openid" />
         <result column="card" property="card" />
         <result column="birthday" property="birthday" />
@@ -19,11 +22,12 @@
         <result column="creator" property="creator" />
         <result column="updateTime" property="updateTime" />
         <result column="mender" property="mender" />
+
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, wxnumber, head, username, sex, card, birthday, phone, address, balance, createTime, creator, updateTime, mender,openid
+        id, wxnumber, head,nickname, username, sex,status,email,card, birthday, phone, address, balance, createTime, creator, updateTime, mender,openid
     </sql>
     <select id="findAll" resultType="com.example.SecurityDemo.domain.SysUser">
         select * from sysuser

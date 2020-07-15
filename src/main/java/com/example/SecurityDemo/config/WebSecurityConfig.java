@@ -118,7 +118,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/orderm/**",
                 "/login",
                 "/getInfo",
-                "/getRouters");
+                "/getRouters",
+                "/monitor/server",
+                "/system/user/profile");
     }
 
     /**
@@ -130,11 +132,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         //添加前置通知过滤器
        http.addFilterBefore(verifyCodeFilter, UsernamePasswordAuthenticationFilter.class);
-        http.csrf().disable()
+        http
                 .httpBasic().authenticationEntryPoint(authenticationEntryPoint)
                 .and()
                 .authorizeRequests()
-              //  .antMatchers("/swagger-ui.html").anonymous()
                 .antMatchers("/store/getList").hasRole("ADMIN")//访问该地址需要拥有admin权限
                 .antMatchers("/price/getList").hasRole("MEMBER") // 角色为member
                 .anyRequest().authenticated()
