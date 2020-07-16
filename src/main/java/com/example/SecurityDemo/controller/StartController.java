@@ -50,28 +50,22 @@ public class StartController {
     @Autowired
     private ISysMenuService menuService;
     @GetMapping ("/login")
-    public Result login(LoginBody loginBody) {
+    public Result login(HttpServletRequest httpServletRequest,LoginBody loginBody) {
         Result ajax = new Result();
         // 用户验证
         System.err.println("用户验证***************************************************************"+loginBody.getUsername());
-        BCryptPasswordEncoder bCryptPasswordEncoder=new BCryptPasswordEncoder();
-        //  boolean f= bCryptPasswordEncoder.matches(loginBody.getPassword(),userDetails.getPassword());
-        //     System.err.println("**********************"+f+"**************************");
-        final Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginBody.getUsername(),loginBody.getPassword()));
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken=new UsernamePasswordAuthenticationToken(loginBody.getUsername(),loginBody.getPassword());
+        Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         final UserDetails userDetails = userDetailsService.loadUserByUsername(loginBody.getUsername());
         SecurityContext securityContext = SecurityContextHolder.getContext();
-        if(securityContext == null)
-        {
-            System.err.println("为什么是空的？");
-        }
+        HttpSession session = httpServletRequest.getSession(true);
+        session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
         SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         ajax.setData(userDetails);
         ajax.setCode(200);
         return ajax;
-    }
+        }
     @GetMapping("getInfo")
     public AjaxResult getInfo()
     {

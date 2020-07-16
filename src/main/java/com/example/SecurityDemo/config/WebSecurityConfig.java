@@ -134,8 +134,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         //添加前置通知过滤器
        http.addFilterBefore(verifyCodeFilter, UsernamePasswordAuthenticationFilter.class);
         http
-              //  .httpBasic().authenticationEntryPoint(authenticationEntryPoint)
-               // .and()
+                .httpBasic().authenticationEntryPoint(authenticationEntryPoint)
+                .and()
                 .authorizeRequests()
                 .antMatchers("/store/getList").hasRole("ADMIN")//访问该地址需要拥有admin权限
                 .antMatchers("/price/getList").hasRole("MEMBER") // 角色为member
