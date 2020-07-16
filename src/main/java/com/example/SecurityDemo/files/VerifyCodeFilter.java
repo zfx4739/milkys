@@ -2,6 +2,7 @@ package com.example.SecurityDemo.files;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -35,21 +36,25 @@ public class VerifyCodeFilter extends GenericFilterBean {
     {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
-        if ("POST".equalsIgnoreCase(request.getMethod()) && defaultFilterProcessUrl.equals(request.getServletPath()))
-        {
+//        if ("POST".equalsIgnoreCase(request.getMethod()) && defaultFilterProcessUrl.equals(request.getServletPath()))
+//        {
             System.err.println("验证码验证**************************************************************");
             System.out.println(request.getParameter("username"));
 
 //            if (request.getParameter("username") != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+//                System.err.println("SecurityContextHolder.getContext().getAuthentication() == null**************************************************************");
 //            UserDetails userDetails = this.userDetailsService.loadUserByUsername(request.getParameter("username"));
-////                if (jwtTokenUtil.validateToken(authHeader)) {
-////                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-////                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-////                    SecurityContextHolder.getContext().setAuthentication(authentication);
-////                }
-////            }
+//                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+//                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+//                    SecurityContextHolder.getContext().setAuthentication(authentication);
+//
 //            }
-// 验证码验证
+        SecurityContext securityContext=SecurityContextHolder.getContext();
+            if (SecurityContextHolder.getContext()== null ) {
+
+                System.err.println(" null????????????????????????");
+
+            }
 //            String requestCaptcha = request.getParameter("code");
 //            String genCaptcha = (String) request.getSession().getAttribute("index_code");
 //            if (StringUtils.isEmpty(requestCaptcha)) throw new AuthenticationServiceException("验证码不能为空!");
@@ -57,9 +62,9 @@ public class VerifyCodeFilter extends GenericFilterBean {
 //            { throw new AuthenticationServiceException("验证码错误!");
 //
 //            }
-        }
+       // }
         chain.doFilter(request, response);
-    }
+}
 }
 
 

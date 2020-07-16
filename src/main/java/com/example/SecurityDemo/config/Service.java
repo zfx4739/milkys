@@ -4,8 +4,10 @@ import com.example.SecurityDemo.domain.SysUser;
 import com.example.SecurityDemo.service.UserService;
 import com.example.SecurityDemo.service.sysroleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -54,6 +56,7 @@ public class Service {
                     grantedAuthorities.add(grantedAuthority);
                 });
             }
+
             User user;
             user = new User(sysUser.getUsername(), sysUser.getPassword(), true, true, true, true,       grantedAuthorities);
             return user;

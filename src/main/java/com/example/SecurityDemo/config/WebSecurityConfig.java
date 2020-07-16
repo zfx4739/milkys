@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -44,12 +45,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     VerifyCodeFilter verifyCodeFilter;                             //验证图片过滤器
 
+//    @Autowired
+//    private UserDetailsService userDetailsService;
 
-
-    @Bean
+    @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
     @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception
-    {
+    public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
     @Bean
@@ -65,7 +66,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService());
+        auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
     }
     //注入PasswordEncoder，加密方式
     @Bean
@@ -109,7 +110,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/js/**",                   //放行静态文件
                 "/css/**",
                 "/images/**",
-                "/captchaImage",
+               "/captchaImage",
                 "/swagger-ui.html/**",
                 "/webjars/**",
                 "/member/getList",         //放行登录验证码等
@@ -133,8 +134,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         //添加前置通知过滤器
        http.addFilterBefore(verifyCodeFilter, UsernamePasswordAuthenticationFilter.class);
         http
-                .httpBasic().authenticationEntryPoint(authenticationEntryPoint)
-                .and()
+              //  .httpBasic().authenticationEntryPoint(authenticationEntryPoint)
+               // .and()
                 .authorizeRequests()
                 .antMatchers("/store/getList").hasRole("ADMIN")//访问该地址需要拥有admin权限
                 .antMatchers("/price/getList").hasRole("MEMBER") // 角色为member

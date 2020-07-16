@@ -12,8 +12,15 @@ import com.example.SecurityDemo.util.*;
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
@@ -37,19 +44,33 @@ public class StartController {
     @Autowired
     private sysroleService sysroleService;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     @Autowired
     private ISysMenuService menuService;
-    @PostMapping ("/login")
-    public Result login(@RequestBody LoginBody loginBody) {
-            Result ajax = new Result();
-            // 用户验证
+    @GetMapping ("/login")
+    public Result login(LoginBody loginBody) {
+        Result ajax = new Result();
+        // 用户验证
         System.err.println("用户验证***************************************************************"+loginBody.getUsername());
-            Service services=new Service();
-        UserDetails userDetails = this.userDetailsService.loadUserByUsername(loginBody.getUsername());
-            ajax.setData(userDetails);
-            ajax.setCode(200);
-            return ajax;
+        BCryptPasswordEncoder bCryptPasswordEncoder=new BCryptPasswordEncoder();
+        //  boolean f= bCryptPasswordEncoder.matches(loginBody.getPassword(),userDetails.getPassword());
+        //     System.err.println("**********************"+f+"**************************");
+        final Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginBody.getUsername(),loginBody.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(loginBody.getUsername());
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        if(securityContext == null)
+        {
+            System.err.println("为什么是空的？");
+        }
+        SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ajax.setData(userDetails);
+        ajax.setCode(200);
+        return ajax;
     }
     @GetMapping("getInfo")
     public AjaxResult getInfo()
