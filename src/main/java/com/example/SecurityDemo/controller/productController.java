@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,7 @@ import java.util.List;
  */
 //Swagger@ApiOperation()接口注释
 
-
+@RestController
 @RequestMapping("/product")
 public class productController {
 
@@ -120,7 +121,7 @@ public class productController {
      * @date  2020/6/30 16:20
      *
      */
-    @GetMapping("listProduct")
+    @GetMapping("/listProduct")
     public Result listProduct(PageRequest pageRequest, Product product){
         Result result=new Result();
         QueryWrapper<Product> wrapper = new QueryWrapper<Product>();

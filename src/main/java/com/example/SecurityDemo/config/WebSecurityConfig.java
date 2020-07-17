@@ -110,11 +110,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/js/**",                   //放行静态文件
                 "/css/**",
                 "/images/**",
-               "/captchaImage",
+               "/captchaImage",             //放行登录验证码等
                 "/swagger-ui.html/**",
                 "/webjars/**",
-                "/member/getList",         //放行登录验证码等
+                "/member/getList",
                 "/product/wx/**",
+                "/logininfor/**",
                 "/start/wx/login",
                 "/orderm/**",
                 "/login",

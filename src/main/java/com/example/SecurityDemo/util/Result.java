@@ -127,9 +127,7 @@ public class Result<T> {
 		return code;
 	}
 	
-	/**
-	 * @param mesage the mesage to set
-	 */
+
 	public void setMessage(String message) {
 		this.message = message;
 	}

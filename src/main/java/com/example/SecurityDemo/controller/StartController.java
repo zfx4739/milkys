@@ -1,11 +1,14 @@
 package com.example.SecurityDemo.controller;
 import com.example.SecurityDemo.config.Service;
+import com.example.SecurityDemo.diary.factroy.AsyncFactory;
 import com.example.SecurityDemo.domain.Server;
 import com.example.SecurityDemo.domain.SysMenu;
 import com.example.SecurityDemo.domain.SysRole;
 import com.example.SecurityDemo.domain.SysUser;
 import com.example.SecurityDemo.dto.LoginBody;
+import com.example.SecurityDemo.redis.RedisCache;
 import com.example.SecurityDemo.service.ISysMenuService;
+import com.example.SecurityDemo.service.SysLogininforService;
 import com.example.SecurityDemo.service.UserService;
 import com.example.SecurityDemo.service.sysroleService;
 import com.example.SecurityDemo.util.*;
@@ -13,6 +16,8 @@ import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -23,6 +28,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import sun.misc.MessageUtils;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -31,6 +38,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 public class StartController {
@@ -49,29 +57,59 @@ public class StartController {
 
     @Autowired
     private ISysMenuService menuService;
-    @GetMapping ("/login")
-    public Result login(HttpServletRequest httpServletRequest,LoginBody loginBody) {
-        Result ajax = new Result();
+
+    @Autowired
+    private SysLogininforService sysLogininforService;
+
+    @Autowired
+    private RedisCache redisCache;
+
+
+    /**
+    * @description 登录方法
+    *@params loginBody
+    * @return  Result
+    * @author  zfx
+    * @date  2020/7/17 16:01
+    *
+    */
+    @PostMapping ("/login")
+    public Result login(HttpServletRequest httpServletRequest,LoginBody loginBody){
+        Result result = new Result();
+        AsyncFactory asyncFactory=new AsyncFactory();
+        String massage="登录成功";
+        String agent = httpServletRequest.getHeader("User-Agent");
         // 用户验证
-        System.err.println("用户验证***************************************************************"+loginBody.getUsername());
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken=new UsernamePasswordAuthenticationToken(loginBody.getUsername(),loginBody.getPassword());
-        Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(loginBody.getUsername());
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        HttpSession session = httpServletRequest.getSession(true);
-        session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
-        SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        ajax.setData(userDetails);
-        ajax.setCode(200);
-        return ajax;
+        try{
+            System.err.println("用户验证***************************************************************"+loginBody.getUsername());
+            //用户认证
+            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken=new UsernamePasswordAuthenticationToken(loginBody.getUsername(),loginBody.getPassword());
+            Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            final UserDetails userDetails = userDetailsService.loadUserByUsername(loginBody.getUsername());
+            //用户信息放入上下文
+            SecurityContext securityContext = SecurityContextHolder.getContext();
+            HttpSession session = httpServletRequest.getSession(true);
+            session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+            SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            result.setData(userDetails);
+            result.setCode(200);
+        }catch (Exception e){
+            if(e instanceof BadCredentialsException){
+                 massage="用户不存在/密码错误";
+                 //加入登入日志
+                asyncFactory.recordLogininfor(loginBody.getUsername(), Constants.LOGIN_FAIL,massage );
+                result.setCode(401);
+                throw new AuthenticationServiceException("用户不存在/密码错误!");
+            }
+        };
+        asyncFactory.recordLogininfor(loginBody.getUsername(), Constants.LOGIN_SUCCESS, massage);
+        return result;
         }
     @GetMapping("getInfo")
     public AjaxResult getInfo()
     {
         SysUser user = userService.detali(2);
-               // tokenService.getLoginUser(ServletUtils.getRequest());
-//        SysUser  = loginUser.getUser();
         // 角色集合
         Set<SysRole> roles = sysroleService.selectRolePermissionByUserId(user.getId());
         // 权限集合
@@ -132,27 +170,13 @@ public class StartController {
     @GetMapping("/system/user/profile")
     public AjaxResult profile()
     {
-
         SysUser user = userService.detali(2);;
         AjaxResult ajax = AjaxResult.success(user);
 //        ajax.put("roleGroup", userService.selectUserRoleGroup(loginUser.getUsername()));
 //        ajax.put("postGroup", userService.selectUserPostGroup(loginUser.getUsername()));
         return ajax;
     }
-//    /**
-//     * 个人信息
-//     */
-//    @GetMapping("/system/user/profile")
-//    public AjaxResult profile()
-//    {
-//        Object principal = authentication.getPrincipal();
-//        LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
-//        SysUser user = loginUser.getUser();
-//        AjaxResult ajax = AjaxResult.success(user);
-//        ajax.put("roleGroup", userService.selectUserRoleGroup(loginUser.getUsername()));
-//        ajax.put("postGroup", userService.selectUserPostGroup(loginUser.getUsername()));
-//        return ajax;
-//    }
+
     /**
      * 生成验证码
      */
@@ -164,8 +188,8 @@ public class StartController {
         // 唯一标识
         String uuid = IdUtils.simpleUUID();
         String verifyKey = Constants.CAPTCHA_CODE_KEY + uuid;
-
-        //redisCache.setCacheObject(verifyKey, verifyCode, Constants.CAPTCHA_EXPIRATION, TimeUnit.MINUTES);
+        //放入缓存验证码时效2分钟
+        redisCache.setCacheObject(verifyKey, verifyCode, Constants.CAPTCHA_EXPIRATION, TimeUnit.MINUTES);
         // 生成图片
         int w = 111, h = 36;
         ByteArrayOutputStream stream = new ByteArrayOutputStream();

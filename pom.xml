@@ -82,6 +82,17 @@
 			<artifactId>oshi-core</artifactId>
 			<version>3.9.1</version>
 		</dependency>
+		<!-- 解析客户端操作系统、浏览器等 -->
+		<dependency>
+			<groupId>eu.bitwalker</groupId>
+			<artifactId>UserAgentUtils</artifactId>
+			<version>1.19</version>
+		</dependency>
+		<!-- redis 缓存操作 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
 		<!--<dependency>-->
 		<!--<groupId>org.mybatis.spring.boot</groupId>-->
 		<!--<artifactId>mybatis-spring-boot-starter</artifactId>-->
