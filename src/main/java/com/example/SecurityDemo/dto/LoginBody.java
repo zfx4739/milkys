@@ -3,7 +3,7 @@ package com.example.SecurityDemo.dto;
 /**
  * 用户登录对象
  * 
- * @author ruoyi
+ * @author zfx
  */
 public class LoginBody
 {

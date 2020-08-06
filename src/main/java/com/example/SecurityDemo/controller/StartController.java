@@ -73,7 +73,7 @@ public class StartController {
     * @date  2020/7/17 16:01
     *
     */
-    @PostMapping ("/login")
+    @PostMapping ("/dologin")
     public Result login(HttpServletRequest httpServletRequest,LoginBody loginBody){
         Result result = new Result();
         AsyncFactory asyncFactory=new AsyncFactory();
@@ -89,8 +89,8 @@ public class StartController {
             final UserDetails userDetails = userDetailsService.loadUserByUsername(loginBody.getUsername());
             //用户信息放入上下文
             SecurityContext securityContext = SecurityContextHolder.getContext();
-            HttpSession session = httpServletRequest.getSession(true);
-            session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+//            HttpSession session = httpServletRequest.getSession(true);
+//            session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
             SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             result.setData(userDetails);
             result.setCode(200);

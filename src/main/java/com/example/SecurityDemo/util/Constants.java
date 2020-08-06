@@ -4,7 +4,7 @@ package com.example.SecurityDemo.util;
 /**
  * 通用常量信息
  * 
- * @author ruoyi
+ * @author zfx
  */
 public class Constants
 {

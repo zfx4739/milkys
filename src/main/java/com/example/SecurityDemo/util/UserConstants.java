@@ -3,7 +3,7 @@ package com.example.SecurityDemo.util;
 /**
  * 用户常量信息
  * 
- * @author ruoyi
+ * @author zfx
  */
 public class UserConstants
 {

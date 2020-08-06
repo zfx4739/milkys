@@ -6,7 +6,7 @@ import com.example.SecurityDemo.util.Arith;
 /**
  * CPU相关信息
  * 
- * @author ruoyi
+ * @author zfx
  */
 public class Cpu
 {

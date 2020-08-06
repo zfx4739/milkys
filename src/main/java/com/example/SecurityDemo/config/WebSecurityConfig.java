@@ -17,7 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-//开启表示喂配置类
+//开启表示配置类
 @Configuration
 //启用springSecrity
 @EnableWebSecurity
@@ -50,9 +50,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
     @Override
+
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
+    @Override
     @Bean
     public UserDetailsService userDetailsService() {
         //获取用户账号密码及权限信息
@@ -90,6 +92,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      * rememberMe          |   允许通过remember-me登录的用户访问
      * authenticated       |   用户登录后可访问
      *
+     * 这两个都是继承WebSecurityConfigurerAdapter后重写的方法
+
+
+     *
      * http.csrf().disable()
      * 在Security的默认拦截器里，默认会开启CSRF处理，判断请求是否携带了token，
      * 如果没有就拒绝访问。 并且，在请求为(GET|HEAD|TRACE|OPTIONS)时，
@@ -99,7 +105,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     //匿名允许经过接口
     @Override
     public void configure(WebSecurity web) throws Exception {
-
+        //web.ignoring是直接绕开spring security的所有filter，直接跳过验证,web ignore比较适合配置前端相关的静态资源，
         web.ignoring().antMatchers(
                 "/v2/api-docs",//放行swagger
                 "/swagger-resources/**",
@@ -110,19 +116,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/js/**",                   //放行静态文件
                 "/css/**",
                 "/images/**",
-               "/captchaImage",             //放行登录验证码等
-                "/swagger-ui.html/**",
-                "/webjars/**",
-                "/member/getList",
-                "/product/wx/**",
-                "/logininfor/**",
-                "/start/wx/login",
-                "/orderm/**",
-                "/login",
-                "/getInfo",
-                "/getRouters",
-                "/monitor/server",
-                "/system/user/profile");
+              "/captchaImage"            //放行登录验证码等
+//                "/swagger-ui.html/**",
+//                "/webjars/**",
+//                "/member/getList",
+//                "/product/wx/**",
+//                "/logininfor/**",
+//                "/start/wx/login",
+//                "/orderm/**",
+//
+//                "/getInfo",
+//                "/getRouters",
+//                "/monitor/server",
+//                "/system/user/profile"
+        );
     }
 
     /**
@@ -133,17 +140,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         //添加前置通知过滤器
-       http.addFilterBefore(verifyCodeFilter, UsernamePasswordAuthenticationFilter.class);
-        http
-                .httpBasic().authenticationEntryPoint(authenticationEntryPoint)
-                .and()
-                .authorizeRequests()
+          http.addFilterBefore(verifyCodeFilter, UsernamePasswordAuthenticationFilter.class);
+        // http.permitAll不会绕开springsecurity验证，相当于是允许该路径通过
+        http.csrf().disable();
+        http .httpBasic().authenticationEntryPoint(authenticationEntryPoint)     //无权访问
+             .and().authorizeRequests()
+               .antMatchers("/doslogin").permitAll()
                 .antMatchers("/store/getList").hasRole("ADMIN")//访问该地址需要拥有admin权限
                 .antMatchers("/price/getList").hasRole("MEMBER") // 角色为member
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                .loginProcessingUrl("/login")
+                .loginProcessingUrl("/dologin")
                 .successHandler(authenticationSuccessHandler) // 登录成功
                 .failureHandler(authenticationFailureHandler) // 登录失败
                 .permitAll()// 登录页面用户任意访问

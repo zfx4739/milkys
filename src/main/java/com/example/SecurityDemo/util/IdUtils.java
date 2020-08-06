@@ -4,7 +4,7 @@ package com.example.SecurityDemo.util;
 /**
  * ID生成器工具类
  *
- * @author ruoyi
+ * @author zfx
  */
 public class IdUtils
 {

@@ -3,7 +3,7 @@ package com.example.SecurityDemo.util;
 /**
  * 工具类异常
  * 
- * @author ruoyi
+ * @author zfx
  */
 public class UtilException extends RuntimeException
 {

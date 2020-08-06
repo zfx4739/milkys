@@ -13,7 +13,7 @@ import java.util.Random;
 /**
  * 工具类
  * 
- * @author ruoyi
+ * @author zfx
  */
 public class VerifyCodeUtils2
 {
